@@ -33,6 +33,8 @@ export class UserService {
 
     async login(req: LoginDto) {
         let user = await this.validateUser(req);
+        console.log('user', user);
+        
         if (user) {
             return {
                 data: user,

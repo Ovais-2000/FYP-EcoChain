@@ -1,7 +1,7 @@
 import { Column, DataType, HasMany, Table } from "sequelize-typescript";
 import { BaseEntity } from "src/models/BaseEntity";
 
-@Table({ tableName: "userId", timestamps: false })
+@Table({ tableName: "eco_user", timestamps: false })
 export class User extends BaseEntity<User> { 
     
     @Column({ primaryKey: true, autoIncrement: true, type: DataType.INTEGER })

@@ -10,8 +10,12 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('EcoChain')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-  await app.listen(3000);
+    const globalPrefix = 'api/ecochain'
+    app.setGlobalPrefix(globalPrefix);
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('/', app, document);
+    const port = 3000;
+    await app.listen(port);
+    
 }
 bootstrap();

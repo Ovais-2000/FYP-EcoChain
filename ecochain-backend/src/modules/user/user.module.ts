@@ -9,13 +9,14 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { DatabaseModule } from 'src/config/database/database.module';
 import { modelProviders } from 'src/config/database/model.provider';
+import { env } from 'src/config/env/env.helper';
 
 @Module({
     imports: [
         PassportModule,
         DatabaseModule,
         JwtModule.register({
-            secret: process.env.JWT_SECRET,
+            secret: env.JWT_STRATEGY,
             signOptions: { expiresIn: '1d' }, // You can adjust the token expiration time
         }),
     ],
