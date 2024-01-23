@@ -2,8 +2,8 @@
 
 export const environment = {
     port: 3000,
-    DB_USER: 'zaid',
-    DB_PASSWORD: 'WizTech123a',
+    DB_USER: 'root',
+    DB_PASSWORD: 'root',
     DB_DIALECT: 'mysql',
     DB_HOST: 'localhost',
     DB_NAME: 'ecochain',

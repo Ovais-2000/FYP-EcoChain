@@ -1,5 +1,7 @@
 import 'package:echo_chain/screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -10,12 +12,61 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String fullName = '';
-  String email = '';
-  String password = '';
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
   String confirmPassword = '';
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+
+  final String apiUrl = "http://194.233.83.152/api/ecochain/user/register";
+
+  Future<void> registerUser() async {
+    String firstName = _firstNameController.text.trim();
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(<String, String>{
+          'firstName': firstName,
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        // Registration successful
+        final responseData = jsonDecode(response.body);
+        print('User registered successfully: $responseData');
+
+        // Fluttertoast.showToast(msg: 'User Registered successfully!',
+        //   toastLength: Toast.LENGTH_SHORT,
+        //   gravity: ToastGravity.BOTTOM,
+        //   timeInSecForIosWeb: 1,
+        //   backgroundColor: Colors.green,
+        //   textColor: Colors.white,
+        //   fontSize: 16.0,
+        // );
+
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ),
+        );
+      } else {
+        // Handle registration failure
+        print('User registration failed');
+      }
+    } catch (e) {
+      print('Error during registration: $e');
+    }
+  }
+
 
   String? validateFullName(String? value) {
     if (value == null || value.isEmpty) {
@@ -42,6 +93,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   String? _validatePassword(String? value) {
+    String password = _passwordController.text.trim();
+
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
@@ -51,21 +104,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (!RegExp(r"^[a-zA-Z0-9_.,@#$%^&*!]+$").hasMatch(value)) {
       return 'Password can contain letters, numbers, and symbols (e.g., _ , . @ # \$ % ^ & * !)';
     }
+    password = value;
     return null;
   }
 
   String? validateConfirmPassword(String? value) {
+    String password = _passwordController.text.trim();
+
     if (value == null || value.isEmpty) {
       return 'Please confirm your password';
     }
     if (password != value) {
       return 'Passwords do not match';
     }
-    else if (password == value) {
-      return 'Passwords Matched';
-
+    if (password == value) {
+      return null;
     }
-    return null;
   }
 
 
@@ -142,6 +196,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             padding: const EdgeInsets.only(
                                 left: 20, right: 20, top: 10),
                             child: TextFormField(
+                              controller: _firstNameController,
                               decoration: InputDecoration(
                                 hintText: 'Full Name',
                                 fillColor: const Color(0xffF8F9FA),
@@ -162,9 +217,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                               validator: validateFullName,
-                              onSaved: (value) {
-                                fullName = value ?? '';
-                              },
+                              // onSaved: (value) {
+                              //   firstName = value ?? '';
+                              // },
                             ),
                           ),
                           SizedBox(
@@ -173,6 +228,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: TextFormField(
+
+                              controller:  _emailController,
                               decoration: InputDecoration(
                                 hintText: 'Email',
                                 fillColor: const Color(0xffF8F9FA),
@@ -193,15 +250,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                               validator: validateEmail,
-                              onSaved: (value) {
-                                email = value ?? '';
-                              },
+                              // onSaved: (value) {
+                              //   email = value ?? '';
+                              // },
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
                                 left: 20, right: 20, top: 10),
                             child: TextFormField(
+                              controller: _passwordController,
                               decoration: InputDecoration(
                                 hintText: 'Password',
                                 fillColor: const Color(0xffF8F9FA),
@@ -235,9 +293,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               validator: _validatePassword,
                               obscureText: !_isPasswordVisible,
-                              onSaved: (value) {
-                                password = value ?? '';
-                              },
+                              // onSaved: (value) {
+                              //   password = value ?? '';
+                              // },
                             ),
                           ),
                           Padding(
@@ -300,8 +358,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  // Form is valid, perform sign-up logic with
-                                  // the user input stored in fullName, email, password, and confirmPassword
+                                  registerUser();
                                 }
                               },
                               child: const Text(
@@ -357,7 +414,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
               const SizedBox(
-                height: 120,
+                height: 100,
                 child: Image(
                   image: AssetImage("images/splashWhite.png"),
                 ),
