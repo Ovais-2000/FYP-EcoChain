@@ -1,6 +1,8 @@
 import 'package:echo_chain/screens/buyer_screen.dart';
 import 'package:echo_chain/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,6 +17,49 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final emailRegExp = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
   bool _isPasswordVisible = false;
+
+  final String apiUrl = "http://194.233.83.152/api/ecochain/user/login";
+
+  Future<void> loginUser() async {
+    final String email = _emailController.text.trim();
+    final String password = _passwordController.text.trim();
+
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(<String, String>{
+          'email': email,
+          'password': password,
+        }),
+      );
+
+
+      if (response.statusCode == 201) {
+        // Login successful
+        final responseData = jsonDecode(response.body);
+        String token = responseData['token'];
+        print('User logged in successfully. Token: $token');
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const BuyerScreen(),
+          ),
+        );
+      } else {
+
+        print('User login failed. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+
+      }
+    } catch (e) {
+      // Handle network or other errors
+      print('Error during login: $e');
+    }
+  }
+
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
@@ -32,9 +77,6 @@ class _LoginScreenState extends State<LoginScreen> {
       return 'Password is required';
     }
 
-    if(value.length < 8) {
-      return 'Password must be atleast 8 characters long';
-    }
     return null;
 
   }
@@ -158,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onTap: () {
                                     setState(() {
                                       _isPasswordVisible = !_isPasswordVisible;
-                                    });
+                                     });
                                   },
                                   child: Icon(
                                     _isPasswordVisible
@@ -213,11 +255,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: GestureDetector(
                                 onTap: () {
                                   if (_formKey.currentState!.validate()) {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => const BuyerScreen(),
-                                      ),
-                                    );
+                                    loginUser();
+                                    // Navigator.of(context).push(
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => const BuyerScreen(),
+                                    //   ),
+                                    // );
                                   }
                                 },
                                 child: const Text(

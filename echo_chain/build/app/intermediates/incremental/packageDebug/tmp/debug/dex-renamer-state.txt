@@ -1,4 +1,0 @@
-#Fri Oct 20 08:46:38 PDT 2023
-base.0=C\:\\Users\\Owais\\StudioProjects\\echo_chain\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
-path.0=classes.dex
-renamed.0=classes.dex

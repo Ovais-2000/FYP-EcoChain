@@ -39,7 +39,7 @@ export class UserService {
                 data: user,
                 token : this.jwtService.sign({email: user.email, userId: user.userId }),
                 message: 'Logged In Successfully',
-                status: 200
+                statusCode: 200
             }
         }
         return {
