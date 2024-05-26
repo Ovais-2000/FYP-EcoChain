@@ -17,7 +17,7 @@ import { env } from 'src/config/env/env.helper';
         DatabaseModule,
         JwtModule.register({
             secret: env.JWT_STRATEGY,
-            signOptions: { expiresIn: '1d' }, // You can adjust the token expiration time
+            signOptions: { expiresIn: '7d' }, // You can adjust the token expiration time
         }),
     ],
     controllers: [UserController],

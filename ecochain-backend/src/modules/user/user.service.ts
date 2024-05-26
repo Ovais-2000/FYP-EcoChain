@@ -33,7 +33,6 @@ export class UserService {
 
     async login(req: LoginDto) {
         let user = await this.validateUser(req);
-        console.log('user', user);
         
         if (user) {
             return {
@@ -44,8 +43,19 @@ export class UserService {
             }
         }
         return {
-             
+            message: 'Internal Server Error! Contact your administrator',
+            status: 500
         }
+    }
+
+    async updateWalletAddress(id: number, walletAddress: string) {
+        let user = await this.userRepository.findOne({where: {userId: id}});
+        user.walletAddress = walletAddress;
+        user.save();
+        return {
+            status: '200', message: 'Address updated successfully'
+        }
+
     }
 
 }
