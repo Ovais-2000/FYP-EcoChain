@@ -54,7 +54,8 @@ export class Trade extends BaseEntity<Trade> {
     @Column({type: DataType.STRING(100)})
     energySource: string;
 
-    
-
+    @ApiProperty({})
+    @Column({type: DataType.STRING(100)})
+    active: boolean;
 
 }

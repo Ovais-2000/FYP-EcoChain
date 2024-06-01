@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Req } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query, Req } from "@nestjs/common";
 
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { User } from "src/models/User";
@@ -35,5 +35,11 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'Bad Request.' })
     async updateWalletAddress(@Param('id') userId: number, @Param('walletAddress') walletAddress:string) {
         return this.userService.updateWalletAddress(userId, walletAddress);
+    }
+
+    @Get('/getUserById')
+    async getUserById(@Query() query: any) {
+        const {userId} = query;
+        return this.userService.getUserById(userId);
     }
 }
