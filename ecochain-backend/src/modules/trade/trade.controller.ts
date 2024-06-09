@@ -40,19 +40,22 @@ export class TradeController {
         const { sellerId } = query;
         return this.tradeService.getAllActiveTrades(sellerId);
     }
+    
     @Delete('/deleteTrade')
     async deleteTrade(@Query() query: any) {
         const { tradeId } = query;
         return this.tradeService.deleteTrade(tradeId);
     }
+
     @Post('/updateTrade')
     async updateTrade(@Query() query: any, @Body() trade: Trade) {
         const { tradeId } = query;
         return this.tradeService.update(tradeId, trade);
     }  
+
     @Get('/buy')
     async buy(@Query() query: any) {
-        const { tradeId, units } = query;
-        return this.tradeService.buy(tradeId, units);
+        const { tradeId, units, buyerId } = query;
+        return this.tradeService.buy(tradeId, units, buyerId);
     }
 }

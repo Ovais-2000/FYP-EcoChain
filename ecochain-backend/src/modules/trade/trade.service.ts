@@ -19,7 +19,7 @@ export class TradeService {
     }
 
     async getMyTrades(_sellerId: number) {
-        return this.tradeRepo.findAll({ where: { sellerId: _sellerId, deleted: false }, include: [User] },)
+        return this.tradeRepo.findAll({ where: { sellerId: _sellerId, deleted: false }, include: [{ all: true }] },)
     }
 
     async getAllTrades(_sellerId: number) {
@@ -28,7 +28,7 @@ export class TradeService {
                 sellerId: {
                     [Op.ne]: _sellerId,
                 }, deleted: false
-            }, include: [User]
+            }, include: [{ all: true }]
         });
     }
 
@@ -38,12 +38,12 @@ export class TradeService {
                 sellerId: {
                     [Op.ne]: _sellerId,
                 }, active: true, deleted: false
-            }, include: [User]
+            }, include: [{ all: true }]
         });
     }
 
     async getTradeByTradeId(tradeId: number) {
-        return this.tradeRepo.findOne({where: {tradeId: tradeId}, include: [User]})
+        return this.tradeRepo.findOne({ where: { tradeId: tradeId }, include: [{ all: true }] })
     }
 
     async deleteTrade(tradeId: number) {
@@ -57,12 +57,14 @@ export class TradeService {
         return this.tradeRepo.update({ ...entity }, { where: { tradeId: id } });
     }
 
-    async buy(tradeId: number, units: number) {
+    async buy(tradeId: number, units: number, buyerId: number) {
         let trade = await this.getTradeByTradeId(tradeId);
         trade.totalSold = units;
+        trade.buyerId = buyerId;
         trade.unitsForSale -= units;
         if (trade.unitsForSale && trade.unitsForSale <= 0)
             trade.active = false;
+        trade.save();
     }
 
 }

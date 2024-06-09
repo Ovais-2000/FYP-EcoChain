@@ -15,7 +15,7 @@ export class Trade extends BaseEntity<Trade> {
     @Column
     buyerId: number;
   
-    @BelongsTo(() => User)
+    @BelongsTo(() => User, "buyerId")
     buyer: User;
 
     @ApiProperty({})
@@ -23,7 +23,7 @@ export class Trade extends BaseEntity<Trade> {
     @Column
     sellerId: number;
   
-    @BelongsTo(() => User)
+    @BelongsTo(() => User, "sellerId")
     seller: User;
 
     @ApiProperty({})
